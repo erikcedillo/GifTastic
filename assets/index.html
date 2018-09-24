@@ -1,32 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Page Title</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>gifTastic</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Animal Search</h1>
-    
-        <!-- Rendered Buttons will get Dumped Here  -->
-        <div id="buttons-view"></div>
-    
-        <form id="animal-form">
-          <label for="animal-input">Add a Movie, Yo!</label>
-          <input type="text" id="animal-input"><br>
-    
-          <!-- Button triggers new movie to be added -->
-          <input id="add-animal" type="submit" value="Add a Movie, Yo!">
-        </form>
-    
-        <!-- Movies will Get Dumped Here -->
-        <div id="gifs-appear-here"></div>
-   
-        <script src="java/app.js"></script>
+
+	<!-- this is the div for adding buttons -->
+	<div id="animalSwitch">
+		<button class="animalBTN" value="Cat">Cat</button>
+		<button class="animalBTN" value="Fish">Fish</button>
+		<button class="animalBTN" value="Tiger">Tiger</button>
+	</div>
+
+<!-- This is the animal form -->
+	<form id="anmial-form">
+		<!-- this is the label for the text box -->
+		<label for="animal-input">Add as animal</label>
+		<!-- this is the textbox -->
+		<input type="text" id="animal-input"><br>
+		<!-- this is the submit button -->
+		<input id="addAnimal" type="submit" value="Submit">
+	</form>
+
+	<!-- This is a div for displaying images -->
+	<div id="animals">
+		
+	</div>
+
+	<script src="java/app.js"></script>
 </body>
 </html>

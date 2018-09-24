@@ -1,100 +1,120 @@
-var animals= ["dog", "cat", "bird", "hamster"];
+//When submit button is clicked!
+$("#addAnimal").click(function () {
+  //grab values from the text box:
+  var btnTxt = $("#animal-input").val();
+
+  // if btnTxt is empty don't do anything if not execute the code.
+
+  if (btnTxt === "") {
+          //do nothing
+          //focus on the textbox
+          $("#animal-input").focus();
+  } else {
+      //create new variable for new button with class of animalBTN
+      var newbtn = $("<button class='animalBTN'>");
+      //add the text inside newbtn
+      //add value attribute to the button
+      newbtn.attr("value", btnTxt);
+      //add text the button
+      newbtn.text(btnTxt);
+      //append the new button in the div called animalSwitch
+      $("#animalSwitch").append(newbtn);
+
+      //clean the textbox
+      $("#animal-input").val("");
+      //focus on the text box
+      $("#animal-input").focus();
+  }
+  //Prevent submit button from refreshing page.
+  return false;
+})
+
+$("#animalSwitch").on("click", "button", function(res){
 
 
+/////////////////Searching Giphy part
+///api key from giphy
+var apikey = "6rvZikSkdbHSZ8jxAXPHuGvVUge4Yj0T";
 
+//host and path
+var fullpath = "https://api.giphy.com/v1/gifs/search";
 
-$("button").on("click", function() {
-  // Grabbing and storing the data-animal property value from the button
-  
-  
-  
-  var animal = $(this).attr("data-animal");
+//limit the number of images
+var limit = 10;
 
-  // Constructing a queryURL using the animal name
-  var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
-    animal + "&api_key=dc6zaTOxFJmzC&limit=10";
+var search = this.value; // search for car for now. 
+//later change this to button value
 
-  // Performing an AJAX request with the queryURL
-  $.ajax({
-    url: queryURL,
-    method: "GET"
-  
-  })}
-  
-    // After data comes back from the request
-    .then(function(response) {
-      console.log(queryURL);
+//adding api key to the search
+fullpath = fullpath+"?api_key="+apikey;
 
+//adding search question:
+fullpath = fullpath+"&q="+search;
+
+//adding limit return
+fullpath = fullpath+"&limit="+limit;
+
+//ajax part
+$.ajax({"url": fullpath,
+      "method": "GET"
+  }).then(function(response){
+
+      //empty animal div
+      $("#animals").html("");
+
+      for(var i =0; i<response.data.length; i++){
+      
+      ///console log response
       console.log(response);
-      // storing the data from the AJAX request in the results variable
-      var results = response.data;
+      //still image url
+      console.log(response.data[i].images.downsized_still.url);
+      //animated image url:
+      console.log(response.data[i].images.downsized.url);
 
-      // Looping through each result item
-      for (var i = 0; i < results.length; i++) {
+      //get the rating
+      console.log(response.data[i].rating);
+      
+      //making new image:
+      var newImage = $("<img class='imgAnimate'>");
+      //initially the path should still image
+      newImage.attr("src", response.data[i].images.fixed_height_still.url);
+      //save animated image path in the data-path attribute
+      newImage.attr("data-animate", response.data[i].images.fixed_height.url);
 
-        // Creating and storing a div tag
-        var animalDiv = $("<div>");
+      newImage.attr("data-still", response.data[i].images.fixed_height_still.url);
 
-        // Creating a paragraph tag with the result item's rating
-        var p = $("<p>").text("Rating: " + results[i].rating);
+      //make the status of img to still
+      newImage.attr("data-state", "still");
+      //add animate / still function to each img. instead of using $(".containerdiv").on("click", "imgAnimate", function(){}
+      newImage.on("click", playGif);
+      var newdiv = $("<div class='containerdiv'>");
+      var ratingDiv = $("<div class='ratingDiv'>");
+      ratingDiv.text("Rating: "+response.data[i].rating.toUpperCase());
+          newdiv.append(ratingDiv);
+          newdiv.append(newImage);
 
-        // Creating and storing an image tag
-        var animalImage = $("<img>");
-        // Setting the src attribute of the image to a property pulled off the result item
-        animalImage.attr("src", results[i].images.fixed_height.url);
-
-        // Appending the paragraph and image tag to the animalDiv
-        animalDiv.append(p);
-        animalDiv.append(animalImage);
-
-        // Prependng the animalDiv to the HTML page in the "#gifs-appear-here" div
-        $("#gifs-appear-here").prepend(animalDiv);
-        // Function for displaying movie data
-      function renderButtons() {
-
-        // Deleting the buttons prior to adding new movies
-        // (this is necessary otherwise you will have repeat buttons)
-        $("#buttons-view").empty();
-
-        // Looping through the array of movies
-        for (var i = 0; i < movies.length; i++) {
-
-          // Then dynamically generating buttons for each movie in the array
-          // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
-          var a = $("<button>");
-          // Adding a class of movie to our button
-          a.addClass("animal");
-          // Adding a data-attribute
-          a.attr("data-animal", animals[i]);
-          // Providing the initial button text
-          a.text(animals[i]);
-          // Adding the button to the buttons-view div
-          $("#buttons-view").append(a);
-        }
+      $("#animals").prepend(newdiv);
+      
       }
 
-      // This function handles events where one button is clicked
-      $("#add-animal").on("click", function(event) {
-        event.preventDefault();
+});
 
-        // This line grabs the input from the textbox
-        var animal = $("#animal-input").val().trim();
+});
 
-        // Adding the movie from the textbox to our array
-        animals.push(animal);
-        console.log(animals);
+$(document).on("click", "img", function(){
+  alert(this.attr("data-still"));
+});
 
-        // Calling renderButtons which handles the processing of our movie array
-        renderButtons();
-      });
 
-      // Function for displaying the movie info
-      // Using $(document).on instead of $(".movie").on to add event listeners to dynamically generated elements
-      $(document).on("click", ".movie", displayMovieInfo);
-
-      // Calling the renderButtons function to display the initial buttons
-      renderButtons();
-      }
-    
-    })
-  );
+//playgif will play and still the image animation
+function playGif(){
+  var state = $(this).attr("data-state");
+        
+    if (state == "still") {
+      $(this).attr("src", $(this).data("animate"));
+      $(this).attr("data-state", "animate");
+    } else {
+      $(this).attr("src", $(this).data("still"));
+      $(this).attr("data-state", "still");
+    }
+}
